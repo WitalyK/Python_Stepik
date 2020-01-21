@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 html = urlopen('https://stepik.org/media/attachments/lesson/209719/2.html').read().decode('utf-8')
 s = str(html)
 regex = '<code>(.*?)</code>'
-l = sorted(findall(regex, s))
+l = findall(regex, s)
 pprint(Counter(l), width=40)
 # print(s.count('C++'))
 # print(s.count('Python'))

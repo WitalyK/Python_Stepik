@@ -1,9 +1,10 @@
 from bs4 import BeautifulSoup
 from pprint import pprint
 from datetime import datetime
+import re
 
 
-def normal(list_item):
+def normal(list_item, start, end):
     list_item = iter(list_item)
     l = []
     while True:
@@ -18,7 +19,9 @@ def normal(list_item):
                 prih = False
             sum = sum.replace('+', '').replace(' RUB', '').replace(' ', '').replace(',', '.')
             opis = next(list_item)
-            l.append((dat, float(sum), opis, prih))
+            opis = re.sub(' +', ' ', opis)
+            if start <= dat <= end:
+                l.append((dat, float(sum), opis, prih))
         except StopIteration:
             break
     l = sorted(l)
@@ -47,7 +50,10 @@ if __name__ == "__main__":
     table = soup.find('table', attrs={'id': 'rrr'})
     for tr in table.find_all('tbody'):
         td = [td.text for td in tr.find_all('td')]
-    td = normal(td)
-    pprint(td)
+    start_dt = datetime.strptime('01.10.2019', '%d.%m.%Y')
+    end_dt = datetime.strptime('31.01.2020', '%d.%m.%Y')
+    td = normal(td, start_dt, end_dt)
+    # pprint(td)
     slov = seter(td)
     pprint(slov)
+    # regex = '\. ((?!\.).)+$'

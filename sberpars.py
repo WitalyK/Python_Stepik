@@ -18,14 +18,17 @@ def normal(list_item, start, end):
             else:
                 prih = False
             sum = sum.replace('+', '').replace(' RUB', '').replace(' ', '').replace(',', '.')
-            opis = next(list_item)
-            opis = re.sub(' +', ' ', opis)
+            opis2 = next(list_item)
+            opis2 = re.sub(' +', ' ', opis2)
+            *rest, opis1 = opis2.split('.')
+            opis2 = opis2.replace(opis1, '')
+            opis1 = opis1.lstrip()
             if start <= dat <= end:
-                l.append((dat, float(sum), opis, prih))
+                l.append((dat, float(sum), opis1, opis2, prih))
         except StopIteration:
             break
     l = sorted(l)
-    l = [(item[0].strftime('%d.%m.%Y'), item[1], item[2], item[3]) for item in l]
+    l = [(item[0].strftime('%d.%m.%Y'), item[1], item[2], item[3], item[4]) for item in l]
     return l
 
 def seter(list_norm):
@@ -33,11 +36,14 @@ def seter(list_norm):
     for line in list_norm:
         if d.get(line[0]):
             if d[line[0]].get(line[2]):
-                d[line[0]][line[2]][0] += line[1]
+                if d[line[0]][line[2]].get(line[3])
+                    d[line[0]][line[2]][line[3]][0] += line[1]
+                else:
+                    d[line[0]][line[2]][line[3]] = [line[1], line[4]]
             else:
-                d[line[0]][line[2]] = [line[1], line[3]]
+                d[line[0]][line[2]] = {line[3]: [line[1], line[4]]}
         else:
-            d[line[0]] = {line[2]: [line[1], line[3]]}
+            d[line[0]] = {line[2]: {line[3]: [line[1], line[4]]}}
     return d
 
 

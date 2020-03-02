@@ -1,3 +1,5 @@
+import re
+
 pte = {'H': 1, 'He': 2, 'Li': 3, 'Be': 4, 'B': 5, 'C': 6, 'N': 7,
        'O': 8, 'F': 9, 'Ne': 10, 'Na': 11, 'Mg': 12, 'Al': 13, 'Si': 14,
        'P': 15, 'S': 16, 'Cl': 17, 'Ar': 18, 'K': 19, 'Ca': 20, 'Sc': 21,
@@ -25,19 +27,37 @@ un = {'1': '\u00B9', '2': '\u00B2', '3': '\u00B3', '4': '\u2074', '5': '\u2075',
 levels = ('1s', '2s', '2p', '3s', '3p', '4s', '3d', '4p', '5s', '4d',
           '5p', '6s', '4f', '5d', '6p', '7s', '5f', '6d', '7p', '8s')
 
-except_to_rule = {24: ['3d4 4s2', '3d5 4s1'], 29: ['3d9 4s2', '3d10 4s1'],
-                  41: ['4d3 5s2', '4d4 5s1'], 42: ['4d4 5s2', '4d5 5s1'], 44: ['4d6 5s2', '4d7 5s1'],
-                  45: ['4d7 5s2', '4d8 5s1'], 46: ['4d8 5s2', '4d10'], 47: ['4d9 5s2', '4d10 5s1'],
-                  78: ['5d8 6s2', '5d9 6s1'], 79: ['5d9 6s2', '5d10 6s1'], 57: ['4f1 6s2', '5d1 6s2'],
-                  58: ['4f2 6s2', '4f1 5d1 6s2'], 64: ['4f8 6s2', '4f7 5d1 6s2'],
-                  89: ['5f1 7s2', '6d1 7s2'], 90: ['5f2 7s2', '6d2 7s2'],
-                  91: ['5f3 7s2', '5f2 6d1 7s2'], 92: ['5f4 7s2', '5f3 6d1 7s2'],
-                  93: ['5f5 7s2', '5f4 6d1 7s2'], 96: ['5f8 7s2', '5f7 6d1 7s2'],
-                  103: ['6d1 7s2', '7s2 7p1']}
+etr = {24: ['3d4 4s2', '3d5 4s1'], 29: ['3d9 4s2', '3d10 4s1'],
+       41: ['4d3 5s2', '4d4 5s1'], 42: ['4d4 5s2', '4d5 5s1'], 44: ['4d6 5s2', '4d7 5s1'],
+       45: ['4d7 5s2', '4d8 5s1'], 46: ['4d8 5s2', '4d10'], 47: ['4d9 5s2', '4d10 5s1'],
+       78: ['5d8 6s2', '5d9 6s1'], 79: ['5d9 6s2', '5d10 6s1'], 57: ['4f1 6s2', '5d1 6s2'],
+       58: ['4f2 6s2', '4f1 5d1 6s2'], 64: ['4f8 6s2', '4f7 5d1 6s2'],
+       89: ['5f1 7s2', '6d1 7s2'], 90: ['5f2 7s2', '6d2 7s2'],
+       91: ['5f3 7s2', '5f2 6d1 7s2'], 92: ['5f4 7s2', '5f3 6d1 7s2'],
+       93: ['5f5 7s2', '5f4 6d1 7s2'], 96: ['5f8 7s2', '5f7 6d1 7s2'],
+       103: ['6d1 7s2', '7s2 7p1']}
 
 
 def unics(lis):
     return ''.join([un[item] for item in lis])
+
+
+def exept_to_rule(orbs, els, n):
+    l1 = etr[n][0].split()
+    l2 = etr[n][1].split()
+    regex = f"{' '.join([i[:2]+unics(i[2:]) for i in l1])}$"
+    orb = re.sub(regex, ' '.join([i[:2]+unics(i[2:]) for i in l2]), orbs)
+    l1 = [lastseq(t[it[1]], int(it[2:]) - t[it[1]]) for it in l1]
+    l2 = [lastseq(t[it[1]], int(it[2:]) - t[it[1]]) for it in l2]
+    el = els.split()
+    for it1, it2 in zip(l1, [l2[0], l2[-1]]):
+        for i in reversed(range(len(el))):
+            if el[i] == it1:
+                el[i] = it2
+                break
+    if len(l2) == 3:
+        el.append(l2[1])
+    return orb, ' '.join(el)
 
 
 def noblegas(s, n):
@@ -45,17 +65,24 @@ def noblegas(s, n):
         return s
     s = s.split()
     if n > 86:
-        return '[Rn] ' + ' '.join(sorted(s[15:], key=lambda x: x[0]))
+        pref = '[Rn] '
+        s = s[15:]
     elif n > 54:
-        return '[Xe] ' + ' '.join(sorted(s[11:], key=lambda x: x[0]))
+        pref = '[Xe] '
+        s = s[11:]
     elif n > 36:
-        return '[Kr] ' + ' '.join(sorted(s[8:], key=lambda x: x[0]))
+        pref = '[Kr] '
+        s = s[8:]
     elif n > 18:
-        return '[Ar] ' + ' '.join(sorted(s[5:], key=lambda x: x[0]))
+        pref = '[Ar] '
+        s = s[5:]
     elif n > 10:
-        return '[Ne] ' + ' '.join(sorted(s[3:], key=lambda x: x[0]))
-    elif n > 2:
-        return '[He] ' + ' '.join(sorted(s[1:], key=lambda x: x[0]))
+        pref = '[Ne] '
+        s = s[3:]
+    else:
+        pref = '[He] '
+        s = s[1:]
+    return pref + ' '.join(sorted(s, key=lambda x: x[0]))
 
 
 def lastseq(num, m):
@@ -84,14 +111,18 @@ def checkio(element):
         elif m < 0:
             el += ' ' + lastseq(num, m)
             orb += ' ' + level + unics(str(num + m))
-            return [str(elnum), noblegas(orb.strip(), elnum), el.strip()]
+            el = el.strip()
+            orb = noblegas(orb.strip(), elnum)
+            if elnum in etr:
+                orb, el = exept_to_rule(orb, el, elnum)
+            return [str(elnum), orb, el]
         else:
             el += ' ' + '2' * (num // 2)
             orb += ' ' + level + unics(str(num))
 
 
 if __name__ == '__main__':
-    print(checkio('Lr'))
+    print(checkio('Gd'))
     # These "asserts" using only for self-checking and not necessary for auto-testing
     assert (checkio('H') == ["1", u"1s¹", "1"]), "First Test - 1s¹"
     assert (checkio('He') == ["2", u"1s²", "2"]), "Second Test - 1s²"

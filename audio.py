@@ -30,10 +30,19 @@ def command():
 chto = command()
 url1 = 'https://www.youtube.com/watch?v=L83ye4x71lw'
 url2 = 'https://www.youtube.com/watch?v=VNcHYr5zL3g'
+url3 = 'https://www.youtube.com/watch?v=Hp9wUEDasY4&t=2s'
+url4 = 'https://www.youtube.com/channel/UCJ4pvfiXasrdFLZusuk4TwA'
+url5 = 'https://www.youtube.com/channel/UC7FAP7wcgiM8bu12DsRd8Mw'
 if 'Невзоров' in chto:
     url = url1
 elif 'Базилио' in chto:
     url = url2
+elif 'Привет' in chto:
+    url = url3
+elif 'Ярик' in chto:
+    url = url4
+elif 'Матвей' in chto:
+    url = url5
 else:
     print(chto + " послышалось")
 webbrowser.open(url)

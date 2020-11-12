@@ -8,18 +8,26 @@ def unfair_districts(number, data):
     stack = [((0, 0), [((0,0),)])]
     while stack:
         (x, y), area = stack.pop()
-
+        if len(sum(area, ())) == height*width:
+            wins, loses = 0, 0
+            for i in area:
+                a = sum([data[x][y][0] for x, y in i])
+                b = sum([data[x][y][1] for x, y in i])
+                wins, loses = wins+(a > b), loses+(a < b)
+            if wins <= loses: continue
+            for k, i in enumerate(area):
+                for a, b in i: out[a][b] = str(k)
+            return [''.join(j) for j in out]
         last_group = area.pop()
-        # считаем сумму людей в last_group, если большечем надо, то цикл заново, этот элемент из стека удал
-        # если ровно как надо - возвращаем last_group в area: -- area, last_group = area+[last_group], ()
+        group_sum = sum(sum([data[i][j] for i, j in last_group], []))
+        if group_sum > number: continue
+        if group_sum == number: area, last_group = area+[last_group], ()
         neighbors = {(x+1, y), (x-1, y), (x, y+1), (x, y-1)} & valid
-        for i in (neighbors - set(sum(area, ())+last_group)): # делаем цикл по соседям тек клетки кроме тех что в ареа
-            stack += [(i, area+[last_group+(i,)])] # в стек добавляем текущий сосед, в список тек кл в посл группу, или
-            # создаём новую группу с первой текущей ячейкой. Делаем новые стеки и вконце тек сосед. Передняя цифра всегда = ячейке в конце
-            if len(last_group) in [1, 2]:# не делаем если ячейка новая в конце одна, в этом сл ластгр пустой
-                stack += [(last_group[-1], area+[last_group+(i,)])] # делаем строчку где в начале предыд яч а в конце новая
-            # если есть другие соседи у последней ячейки замкнувшей предыд последовательность => будут еще строчки с новой ячейкой
-            #
+        for i in (neighbors - set(sum(area, ())+last_group)):
+            stack += [(i, area+[last_group+(i,)])]
+            if len(last_group) in [1, 2]:
+                stack += [(last_group[-1], area+[last_group+(i,)])]
+
 
 if __name__ == '__main__':
     pprint(unfair_districts(5, [[[2, 1], [1, 1], [1, 2]],

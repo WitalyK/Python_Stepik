@@ -1,9 +1,12 @@
+import numpy as np
 
-def is_acceptable_password(password: str) -> bool:
-    return len(password)>6 and any(it.isdigit() for it in password) \
-           and not all(it.isdigit() for it in password)
+Z = np.zeros((5, 5))
+Z += np.arange(5)
+# Z = np.random.random_integers(0,5,(7,5))
+Z = np.random.randint(0,5,(5,5))
 
 
 if __name__ == '__main__':
-    print("Example:")
-    print(is_acceptable_password('984798734839743'))
+    print(Z)
+    print(np.array(list(np.ndenumerate(Z))))
+    print(Z.argsort())

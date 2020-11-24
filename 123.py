@@ -1,26 +1,55 @@
-def intersect(x1, y1, r1, x2, y2, r2):
-    if cen_len := ((x1 - x2) ** 2 + (y1 - y2) ** 2) ** 0.5:
-        return abs(r1 - r2) < cen_len < r1 + r2
+from pprint import pprint
+from typing import Iterable, List, Tuple, Union
+
+Node = Union[int, str]
+Tree = Tuple[Node, List['Tree']]
 
 
-def count_chains(circles: list[tuple[int, int, int]]) -> int:
-    out = [[circles.pop(0)]]
-    while circles:
-        test = circles.pop(0)
-        try:
-            for i, it in enumerate(out):
-                for item in it:
-                    if intersect(*item, *test):
-                        out[i] += (test,)
-                        raise Exception()
-        except:
-            pass
-        else:
-            out.append([test])
-    return len(out)
+def search(pair, tree, one=False):
+    for item in tree:
+        key, value = item
+        if key in pair:
+            if one: return True
+            else: one = True
+        if value:
+            return search(pair, value, one)
+    # return False
+
+
+def on_same_path(tree: Tree, pairs: List[Tuple[Node, Node]]) -> Iterable[bool]:
+    """For each given pair of tree's nodes, say if there are on a same path."""
+    return [search(pair, [tree]) for pair in pairs]
 
 
 if __name__ == '__main__':
-    print(count_chains([(1, 1, 1), (4, 2, 1), (4, 3, 1)]))  # == 2
-    print(count_chains([(1, 1, 1), (2, 2, 1), (3, 3, 1)]))  # == 1
-    print(count_chains([(1, 1, 1), (1, 3, 1), (3, 1, 1), (3, 3, 1)]))  # == 4
+    pprint(on_same_path(
+        (0, [(1, [(2, []),
+                  (3, [])]),
+             (4, [(5, []),
+                  (6, [])]),
+             (7, [(8, []),
+                  (9, [])])]),
+        [(4, 2), (0, 5), (2, 3), (9, 2), (6, 4), (7, 8), (8, 1)],
+    ))
+
+    # [False, True, False, False, True, True, False]
+    # print(list(example))
+    #
+    # TESTS = (
+    #     (
+    #         ('Me', [('Daddy', [('Grandpa', []),
+    #                            ('Grandma', [])]),
+    #                 ('Mom', [('Granny', []),
+    #                          ('?', [])])]),
+    #         [('Grandpa', 'Me'), ('Daddy', 'Granny')],
+    #         [True, False],
+    #     ),
+    #     (
+    #         (1, [(2, [(4, []),
+    #                   (5, [(7, []),
+    #                        (8, []),
+    #                        (9, [])])]),
+    #              (3, [(6, [])])]),
+    #         [(1, 5), (2, 9), (2, 6)],
+    #         [True, True, False],
+    #     ),

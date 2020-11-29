@@ -1,14 +1,10 @@
 import re
 
 
-# "nametxt","name[]txt" False
-# "checkio","[c[]heckio"
-
 def unix_match(filename: str, pattern: str) -> bool:
     pattern = pattern.replace( ".", "\.").replace( "*", ".*").replace(
         '[!', '[^').replace('[]', '[^.]').replace("[^]", "\[!\]")
     return bool(re.match(pattern, filename))
-
 
 
 if __name__ == '__main__':

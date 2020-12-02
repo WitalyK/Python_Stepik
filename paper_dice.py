@@ -23,8 +23,8 @@ def paper_dice(data):
     wrap()
     if len(used) != 6:
         return False
-    for i in range(1,4):
-        if used[i]+ used[7-i] != 7:
+    for i in range(1, 4):
+        if used[i] + used[7 - i] != 7:
             return False
     return True
 
@@ -32,16 +32,16 @@ def paper_dice(data):
 # These "asserts" using only for self-checking and not necessary for auto-testing
 if __name__ == '__main__':
     print(paper_dice(['  1  ',
-                ' 235 ',
-                '  6  ',
-                '  4  ']))  # == True
+                      ' 235 ',
+                      '  6  ',
+                      '  4  ']))  # == True
 
     print(paper_dice(['    ',
-                '12  ',
-                ' 36 ',
-                '  54',
-                '    ']))  # == True
+                      '12  ',
+                      ' 36 ',
+                      '  54',
+                      '    ']))  # == True
 
     print(paper_dice(['123456']))  # == False
     print(paper_dice(['123  ',
-                '  456']))  # == False
+                      '  456']))  # == False
